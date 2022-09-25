@@ -55,27 +55,30 @@ dashboard = meraki.DashboardAPI(
 
 # This function retrieves the netId given an org name and a net name
 def getNetId(orgName,netName):
-	orgId=None
-	netId=None
+	orgId = next(
+		(
+			org['id']
+			for org in dashboard.organizations.getOrganizations()
+			if org['name'] == orgName
+		),
+		None,
+	)
 
-	# Search for the org
-	for org in dashboard.organizations.getOrganizations():
-		if org['name'] == orgName:
-			orgId=org['id']
-			break;
-
-	if orgId == None:
-		print("Invalid organization name supplied: "+orgName)			
+	if orgId is None:
+		print(f"Invalid organization name supplied: {orgName}")
 		exit(-1)
 
-	# Search for the network
-	for net in dashboard.organizations.getOrganizationNetworks(orgId):
-		if net['name'] == netName:
-			netId=net['id']
-			break;
+	netId = next(
+		(
+			net['id']
+			for net in dashboard.organizations.getOrganizationNetworks(orgId)
+			if net['name'] == netName
+		),
+		None,
+	)
 
-	if netId == None:
-		print("Invalid network name supplied: "+netName)			
+	if netId is None:
+		print(f"Invalid network name supplied: {netName}")
 		exit(-1)
 
 	return netId
@@ -94,9 +97,12 @@ def main():
 	print(f"Attempting to delete {templateName}")
 	response = requests.request("GET", url, headers=headers)
 	for template in response.json():
-		if(template['name'] == templateName):
+		if (template['name'] == templateName):
 			try:
-				response=requests.request("DELETE", url+"/"+template['payloadTemplateId'], headers=headers)
+				response = requests.request(
+					"DELETE", f"{url}/" + template['payloadTemplateId'], headers=headers
+				)
+
 
 				# Check if the template is already referenced
 				if response.status_code == 400:
