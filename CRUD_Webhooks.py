@@ -85,7 +85,7 @@ infotext = """
 def select_org():
 	"""get orgid's for given accesstoken and select one"""
 	#
-	url = api_url + '/organizations'
+	url = f'{api_url}/organizations'
 	#
 	headers = {'X-Cisco-Meraki-API-Key': accesstoken, 'Content-Type': 'application/json'}
 	warnings.simplefilter("ignore", exceptions.InsecureRequestWarning)
@@ -95,18 +95,15 @@ def select_org():
 	#
 	print('\n')
 	dic = {}
-	count=0
-	for n in orgas:
+	for count, n in enumerate(orgas):
 		orgname = str(n['name'])
 		orgid    = str(n['id'])
 		print(str(count).rjust(3,' '),'   ', orgname.ljust(20, ' '), orgid)
 		dic[count] = orgid
-		count += 1
 	print('\n')
 	select = input('select org  >')
-	organizationId = dic[int(select)]
 	#
-	return(organizationId)
+	return dic[int(select)]
 
 
 
@@ -123,13 +120,11 @@ def select_network(organizationId):
 	# print(json.dumps(re, sort_keys=True, indent=4))
 	#
 	dic = {}
-	count=0
-	for n in re:
+	for count, n in enumerate(re):
 		networkname = str(n['name'])
 		networkId    = str(n['id'])
 		print(str(count).rjust(3,' '),'   ', networkname.ljust(20, ' '), networkId)
 		dic[count] = networkId
-		count += 1
 	print('\n')
 	select = input('select network  >')
 	# print(dic)
@@ -156,13 +151,11 @@ def list_all_payloadTemplates():
 	re = response.json()
 	# print(json.dumps(re, sort_keys=True, indent=4))
 	print(line)
-	count=0
-	for n in re:
+	for count, n in enumerate(re):
 		payloadTemplateName = str(n['name'])
 		payloadTemplateId   = str(n['payloadTemplateId'])
 		payloadTemplateType = str(n["type"])
 		print(str(count).rjust(3,' '),'   ', payloadTemplateName.ljust(20, ' '), payloadTemplateId.ljust(20, ' '), payloadTemplateType)
-		count += 1
 	print(line)
 	#
 	return()
@@ -231,14 +224,12 @@ def select_a_payloadTemplate():
 	# print(json.dumps(re, sort_keys=True, indent=4))
 	#
 	dic = {}			# {count:'id'} create dic
-	count=0
-	for n in re:
+	for count, n in enumerate(re):
 		payloadTemplateName = str(n['name'])
 		payloadTemplateId   = str(n['payloadTemplateId'])
 		payloadTemplateType = str(n["type"])
 		print(str(count).rjust(3,' '),'   ', payloadTemplateName.ljust(20, ' '), payloadTemplateId)
 		dic[count] = payloadTemplateId
-		count += 1
 	print('\n')
 	select = input('select template  >')
 	payloadTemplateId = dic[int(select)]
@@ -330,7 +321,7 @@ def delete_a_custom_payloadTemplate():
 def display_webhooks_alert_types():
 	""" download and display actual webhook alert types """
 	#
-	url = api_url + f'/organizations/{organizationId}/webhooks/alertTypes'
+	url = f'{api_url}/organizations/{organizationId}/webhooks/alertTypes'
 	#
 	headers = {'X-Cisco-Meraki-API-Key': accesstoken, 'Content-Type': 'application/json'}
 	warnings.simplefilter("ignore", exceptions.InsecureRequestWarning)
@@ -431,18 +422,22 @@ def get_action():
 	print ('\n\n   What do you like to do ? ')
 	print(breite * '-')
 
-	count = 0
-	for element in menue:
-		element = '    ' + element[0]
+	for count, element in enumerate(menue):
+		element = f'    {element[0]}'
 		print (rahmenv + ' '.ljust(breite,' ') + rahmenv)
-		print (rahmenv + ' ' + str(count).ljust(4,' ') + ' ' + element.ljust(breite-6,' ') + rahmenv)
+		print(
+			f'{rahmenv} '
+			+ str(count).ljust(4, ' ')
+			+ ' '
+			+ element.ljust(breite - 6, ' ')
+			+ rahmenv
+		)
+
 		print (rahmenv + ' '.ljust(breite,' ') + rahmenv)
-		count +=1
 	print (''.ljust(breite + 2,rahmenh))
 	select = int(input (' >> '))
 	try:
-		action = menue[select][1]
-		return (action)
+		return menue[select][1]
 	except:
 		return("error")
 

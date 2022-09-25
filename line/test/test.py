@@ -8,9 +8,10 @@ CHANNEL_ACCESS_TOKEN = 'YYY'
 
 url = 'https://api.line.me/v2/bot/message/push'
 headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer {}'.format(CHANNEL_ACCESS_TOKEN)
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {CHANNEL_ACCESS_TOKEN}',
 }
+
 payload = {
   'to': USER_ID,
   'messages': [
